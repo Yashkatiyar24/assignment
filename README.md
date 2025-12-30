@@ -136,8 +136,8 @@ This project automates blog content extraction from [BeyondChats](https://beyond
 ### 1. Clone & Setup
 
 ```bash
-git clone <your-repo-url>
-cd intern
+git clone https://github.com/Yashkatiyar24/assignment.git
+cd assignment
 cp .env.example .env
 # Edit .env with your configuration
 ```
@@ -241,28 +241,86 @@ REACT_APP_API_BASE_URL=http://localhost:4000
 - [x] Citations added at bottom of rewritten articles
 - [x] React frontend displays original & updated articles
 - [x] Responsive UI (mobile + desktop)
-- [ ] Live deployment (Vercel + Render)
 - [x] README documentation
 - [x] Architecture diagram
+- [x] Deployment ready
 
 ---
 
-## 🌐 Deployment
+## 🌐 Deployment Guide
 
-### Frontend (Vercel)
+### **Step 1: Deploy Backend to Render**
 
-```bash
-cd frontend
-npm run build
-# Deploy to Vercel
-```
+1. **Create MongoDB Atlas Database** (if not already done)
+   - Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
+   - Create a free cluster
+   - Get connection string (replace `<password>` with your password)
+   - Whitelist all IPs: `0.0.0.0/0`
 
-### Backend (Render/Railway)
+2. **Deploy to Render**
+   - Go to [render.com](https://render.com) and sign in with GitHub
+   - Click **"New +"** → **"Web Service"**
+   - Connect repository: `Yashkatiyar24/assignment`
+   - Configure:
+     - **Name**: `beyondchats-backend`
+     - **Region**: Choose closest to you
+     - **Branch**: `main`
+     - **Root Directory**: `backend`
+     - **Runtime**: `Node`
+     - **Build Command**: `npm install`
+     - **Start Command**: `node server.js`
+   
+3. **Add Environment Variables** in Render:
+   ```
+   PORT=4000
+   DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/beyondchats
+   GOOGLE_API_KEY=your_google_api_key
+   GOOGLE_CX=your_search_engine_cx
+   LLM_API_KEY=your_llm_api_key
+   LLM_PROVIDER=gemini
+   ```
 
-1. Push to GitHub
-2. Connect to Render/Railway
-3. Set environment variables
-4. Deploy
+4. Click **"Create Web Service"**
+5. Wait for deployment (5-10 minutes)
+6. Copy your backend URL: `https://beyondchats-backend.onrender.com`
+
+### **Step 2: Deploy Frontend to Vercel**
+
+1. **Update Frontend API URL**
+   - Go to [vercel.com](https://vercel.com) and sign in with GitHub
+   - Click **"Add New"** → **"Project"**
+   - Import `Yashkatiyar24/assignment`
+   - Configure:
+     - **Framework Preset**: `Create React App`
+     - **Root Directory**: `frontend`
+     - **Build Command**: `npm run build`
+     - **Output Directory**: `build`
+
+2. **Add Environment Variable**:
+   ```
+   REACT_APP_API_BASE_URL=https://beyondchats-backend.onrender.com
+   ```
+
+3. Click **"Deploy"**
+4. Wait for deployment (2-3 minutes)
+5. Your frontend will be live at: `https://your-project.vercel.app`
+
+### **Step 3: Test Deployment**
+
+1. Visit your Vercel URL
+2. Check if articles load correctly
+3. Verify original vs rewritten articles display
+
+### **Alternative: Railway Deployment**
+
+If you prefer Railway for backend:
+
+1. Go to [railway.app](https://railway.app)
+2. Create new project from GitHub
+3. Select `Yashkatiyar24/assignment`
+4. Set root directory: `backend`
+5. Add same environment variables
+6. Deploy
 
 ---
 
@@ -272,6 +330,15 @@ npm run build
 - Error handling for failed scraping / API calls
 - Modular code structure for scalability
 - Clean separation of concerns
+- CORS enabled for cross-origin requests
+- MongoDB connection with retry logic
+
+---
+
+## 🔗 Live Demo
+
+- **Frontend**: [Add your Vercel URL here after deployment]
+- **Backend API**: [Add your Render URL here after deployment]
 
 ---
 
