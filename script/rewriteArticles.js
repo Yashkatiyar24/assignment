@@ -118,7 +118,7 @@ async function scrapeUrl(url) {
 // ============ LLM Rewrite Functions ============
 
 async function rewriteWithGemini(original, references) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${LLM_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${LLM_API_KEY}`;
   
   const prompt = `You are an expert content writer. Rewrite the following article to make it more engaging and informative. 
 Use the reference articles to enhance the content with additional insights, but maintain the original article's core message.
@@ -126,13 +126,13 @@ Match the professional tone and formatting style of the reference articles.
 Make the content comprehensive yet easy to read.
 
 ORIGINAL ARTICLE:
-${original.slice(0, 4000)}
+${original.slice(0, 3000)}
 
 REFERENCE ARTICLE 1:
-${references[0]?.slice(0, 2000) || 'No reference available'}
+${references[0]?.slice(0, 1500) || 'No reference available'}
 
 REFERENCE ARTICLE 2:
-${references[1]?.slice(0, 2000) || 'No reference available'}
+${references[1]?.slice(0, 1500) || 'No reference available'}
 
 Please rewrite the article now. Output ONLY the rewritten article content, no explanations.`;
 
@@ -150,10 +150,17 @@ Please rewrite the article now. Output ONLY the rewritten article content, no ex
 
   const data = await res.json();
   
+  // Debug: log response if there's an error
+  if (data.error) {
+    console.error('  ❌ Gemini API Error:', data.error.message || JSON.stringify(data.error));
+    throw new Error(data.error.message || 'Gemini API error');
+  }
+  
   if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
     return data.candidates[0].content.parts[0].text;
   }
   
+  console.error('  ❌ Unexpected Gemini response:', JSON.stringify(data).slice(0, 200));
   throw new Error('Gemini API returned invalid response');
 }
 
