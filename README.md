@@ -346,8 +346,13 @@ If you prefer Railway for backend:
 
 ## 🔗 Live Demo
 
-- **Frontend**: [Add your Vercel URL here after deployment]
-- **Backend API**: [Add your Render URL here after deployment]
+| Service | URL |
+|---------|-----|
+| **🌐 Frontend** | `https://assignment-kohl-delta.vercel.app/` |
+| **⚙️ Backend API** | `https://assignment-mnzl.onrender.com/` |
+| **📊 API Health** | `https://assignment-mnzl.onrender.com/` |
+
+> **Note**: Replace the placeholder URLs above with your actual deployment URLs after deploying to Vercel and Render.
 
 ---
 
