@@ -21,7 +21,7 @@
 4. Environment Variables:
    ```
    PORT=4000
-   DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/beyondchats
+   MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/beyondchats
    GOOGLE_API_KEY=your_key
    GOOGLE_CX=your_cx
    LLM_API_KEY=your_key

@@ -202,7 +202,7 @@ Create a `.env` file in project root:
 ```env
 # Backend
 PORT=4000
-DATABASE_URL=mongodb://127.0.0.1:27017/beyondchats
+MONGODB_URI=mongodb://127.0.0.1:27017/beyondchats
 
 # Script
 API_BASE_URL=http://localhost:4000
@@ -273,7 +273,7 @@ REACT_APP_API_BASE_URL=http://localhost:4000
 3. **Add Environment Variables** in Render:
    ```
    PORT=4000
-   DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/beyondchats
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/beyondchats
    GOOGLE_API_KEY=your_google_api_key
    GOOGLE_CX=your_search_engine_cx
    LLM_API_KEY=your_llm_api_key

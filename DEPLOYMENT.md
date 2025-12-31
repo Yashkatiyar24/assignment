@@ -33,7 +33,7 @@
 5. [ ] Add environment variables:
    ```
    PORT=4000
-   DATABASE_URL=<your-mongodb-atlas-connection-string>
+   MONGODB_URI=<your-mongodb-atlas-connection-string>
    GOOGLE_API_KEY=<your-google-api-key>
    GOOGLE_CX=<your-custom-search-engine-id>
    LLM_API_KEY=<your-gemini-api-key>

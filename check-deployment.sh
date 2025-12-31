@@ -115,10 +115,10 @@ if [ -f ".env" ]; then
     echo -e "${GREEN}✓${NC} .env file exists"
     
     # Check for required variables
-    if grep -q "DATABASE_URL" .env; then
-        echo -e "${GREEN}✓${NC} DATABASE_URL configured"
+    if grep -q "MONGODB_URI" .env; then
+        echo -e "${GREEN}✓${NC} MONGODB_URI configured"
     else
-        echo -e "${YELLOW}⚠${NC} DATABASE_URL not found in .env"
+        echo -e "${YELLOW}⚠${NC} MONGODB_URI not found in .env"
     fi
     
     if grep -q "GOOGLE_API_KEY" .env; then

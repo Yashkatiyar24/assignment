@@ -11,16 +11,19 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 4000;
-const DATABASE_URL = process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/beyondchats';
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// Connect to MongoDB
-mongoose
-  .connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch(err => {
-    console.error('❌ Mongo connection error:', err.message);
-    process.exit(1);
+async function connectDB() {
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is missing');
+  }
+
+  await mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 15000
   });
+
+  console.log('✅ Mongo connected');
+}
 
 // Routes
 app.use('/articles', articlesRouter);
@@ -36,6 +39,16 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-});
+async function start() {
+  try {
+    await connectDB();
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`✅ Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Server start failed:', err.message);
+    process.exit(1);
+  }
+}
+
+start();
