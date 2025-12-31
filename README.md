@@ -171,6 +171,15 @@ node rewriteArticles.js
 
 ⚠️ Requires `GOOGLE_API_KEY`, `GOOGLE_CX`, and `LLM_API_KEY` in `.env`
 
+### 5. Scheduled Scraper (server-friendly)
+
+```bash
+cd script
+CRON_SCHEDULE="0 3 * * *" npm run schedule:scrape
+```
+
+This keeps a cron-based runner alive on your server. Pair with a process manager (pm2/systemd) to ensure it restarts on reboot.
+
 ### 5. Start Frontend (Phase 3)
 
 ```bash
