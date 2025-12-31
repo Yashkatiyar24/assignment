@@ -171,6 +171,25 @@ const styles = {
     fontSize: '0.85rem',
     transition: 'background 0.2s',
   },
+  pageButton: {
+    display: 'inline-block',
+    margin: '0 6px',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    border: 'none',
+    background: 'white',
+    color: '#4facfe',
+    fontWeight: 600,
+    cursor: 'pointer',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+    transition: 'transform 0.1s ease, box-shadow 0.2s ease',
+  },
+  pageButtonActive: {
+    background: '#4facfe',
+    color: 'white',
+    boxShadow: '0 6px 16px rgba(79,172,254,0.35)',
+    transform: 'translateY(-1px)',
+  },
 };
 
 // Add CSS animation for spinner
@@ -185,6 +204,8 @@ function App() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 3;
 
   useEffect(() => {
     // Inject spinner animation
@@ -208,6 +229,13 @@ function App() {
       document.head.removeChild(style);
     };
   }, []);
+
+  const totalPages = Math.max(1, Math.ceil(articles.length / pageSize));
+  const paginated = articles.slice((page - 1) * pageSize, page * pageSize);
+
+  const handlePrev = () => setPage(p => Math.max(1, p - 1));
+  const handleNext = () => setPage(p => Math.min(totalPages, p + 1));
+  const handlePage = num => setPage(num);
 
   if (loading) {
     return (
@@ -268,15 +296,18 @@ function App() {
         <p style={styles.subtitle}>
           Compare original articles with AI-rewritten versions
         </p>
+        <div style={{ marginTop: '12px', fontSize: '0.9rem', opacity: 0.9 }}>
+          Showing {paginated.length} of {articles.length} articles · Page {page} / {totalPages}
+        </div>
       </header>
 
       <div style={styles.articleList}>
-        {articles.map((article, index) => (
+        {paginated.map((article, index) => (
           <article key={article._id} style={styles.card}>
             <div style={styles.cardHeader}>
               <h2 style={styles.cardTitle}>{article.title}</h2>
               <div style={styles.cardMeta}>
-                Article {index + 1} of {articles.length}
+                Article {(page - 1) * pageSize + index + 1} of {articles.length}
                 {article.url && (
                   <>
                     {' • '}
@@ -343,6 +374,43 @@ function App() {
       </div>
 
       <footer style={{ textAlign: 'center', color: 'white', opacity: 0.7, padding: '40px 20px', fontSize: '0.9rem' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <button 
+            onClick={handlePrev}
+            disabled={page === 1}
+            style={{
+              ...styles.pageButton,
+              opacity: page === 1 ? 0.4 : 1
+            }}
+          >
+            ← Prev
+          </button>
+          {Array.from({ length: totalPages }).map((_, idx) => {
+            const num = idx + 1;
+            return (
+              <button
+                key={num}
+                onClick={() => handlePage(num)}
+                style={{
+                  ...styles.pageButton,
+                  ...(num === page ? styles.pageButtonActive : {})
+                }}
+              >
+                {num}
+              </button>
+            );
+          })}
+          <button 
+            onClick={handleNext}
+            disabled={page === totalPages}
+            style={{
+              ...styles.pageButton,
+              opacity: page === totalPages ? 0.4 : 1
+            }}
+          >
+            Next →
+          </button>
+        </div>
         Built for BeyondChats Full Stack Web Developer Internship Assignment
       </footer>
     </div>
