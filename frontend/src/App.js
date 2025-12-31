@@ -57,6 +57,29 @@ const styles = {
   cardBody: {
     padding: '24px',
   },
+  cardActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '12px',
+  },
+  ctaButton: {
+    padding: '8px 14px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#4facfe',
+    color: 'white',
+    fontWeight: 600,
+    cursor: 'pointer',
+    boxShadow: '0 6px 20px rgba(79,172,254,0.35)',
+    transition: 'transform 0.1s ease, box-shadow 0.2s ease',
+  },
+  ctaButtonGhost: {
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.4)',
+    color: 'white',
+    boxShadow: 'none'
+  },
   columns: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -148,13 +171,19 @@ const styles = {
     margin: '40px auto',
   },
   empty: {
+    maxWidth: '720px',
+    margin: '0 auto',
     textAlign: 'center',
     color: 'white',
-    padding: '60px 20px',
+    padding: '80px 20px',
+    background: 'rgba(255,255,255,0.06)',
+    borderRadius: '20px',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+    backdropFilter: 'blur(6px)',
   },
   emptyIcon: {
-    fontSize: '4rem',
-    marginBottom: '20px',
+    fontSize: '4.5rem',
+    marginBottom: '24px',
   },
   link: {
     color: '#4facfe',
@@ -205,6 +234,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const pageSize = 3;
 
   useEffect(() => {
@@ -217,6 +247,11 @@ function App() {
     axios.get(`${API_BASE}/articles`)
       .then(res => {
         setArticles(res.data);
+        const newest = res.data.reduce((latest, a) => {
+          const ts = a.updatedAt || a.createdAt || a._id;
+          return ts && (!latest || new Date(ts) > new Date(latest)) ? ts : latest;
+        }, null);
+        setLastUpdated(newest);
         setLoading(false);
       })
       .catch(err => {
@@ -273,17 +308,25 @@ function App() {
         </div>
         <div style={styles.empty}>
           <div style={styles.emptyIcon}>📭</div>
-          <h2>No Articles Yet</h2>
-          <p>Run the scraper script to fetch articles from BeyondChats blog.</p>
-          <code style={{ 
-            display: 'block', 
-            background: 'rgba(0,0,0,0.2)', 
-            padding: '12px', 
-            borderRadius: '8px',
-            marginTop: '16px' 
+          <h2 style={{ fontSize: '1.6rem', marginBottom: '12px' }}>No Articles Yet</h2>
+          <p style={{ opacity: 0.9, marginBottom: '18px' }}>
+            Run the scraper to pull the 5 oldest BeyondChats blog posts, then refresh.
+          </p>
+          <div style={{ 
+            display: 'inline-flex',
+            flexDirection: 'column',
+            gap: '10px',
+            alignItems: 'center',
+            background: 'rgba(0,0,0,0.25)',
+            padding: '14px 18px',
+            borderRadius: '12px',
+            fontFamily: 'monospace',
+            fontSize: '0.95rem',
+            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)'
           }}>
-            cd script && node scrape.js
-          </code>
+            <span>cd script && npm run scrape</span>
+            <span style={{ opacity: 0.8, fontSize: '0.85rem' }}># then npm run rewrite (optional)</span>
+          </div>
         </div>
       </div>
     );
@@ -298,6 +341,25 @@ function App() {
         </p>
         <div style={{ marginTop: '12px', fontSize: '0.9rem', opacity: 0.9 }}>
           Showing {paginated.length} of {articles.length} articles · Page {page} / {totalPages}
+        </div>
+        {lastUpdated && (
+          <div style={{ marginTop: '10px', fontSize: '0.85rem', opacity: 0.85 }}>
+            Last updated: {new Date(lastUpdated).toLocaleString()}
+          </div>
+        )}
+        <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <a
+            href="/api/rewrite"
+            style={{ ...styles.ctaButton, textDecoration: 'none' }}
+          >
+            Trigger Rewrite (API)
+          </a>
+          <a
+            href="/api/scrape"
+            style={{ ...styles.ctaButton, ...styles.ctaButtonGhost, textDecoration: 'none' }}
+          >
+            Run Scraper (API)
+          </a>
         </div>
       </header>
 
